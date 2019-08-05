@@ -1,6 +1,6 @@
 Homework - Text Editor
 
-The purpose if the homework was creating a text editor, which receives 3 arguments: the name of the input file, the name of the output file and a string, that contains the operations that should be applied to the file.
+The purpose of this homework was creating a text editor, which receives 3 arguments: the name of the input file, the name of the output file and a string, that contains the operations that should be applied to the text.
 
 These are the possible operations and the way to call them:
 - wrap text: "W max_line_length";
