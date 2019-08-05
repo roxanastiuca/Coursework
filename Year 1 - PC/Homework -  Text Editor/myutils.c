@@ -82,9 +82,9 @@ int GetStartAndEnd(char *command, int *start_line, int *end_line) {
 }
 
 /**
- * Descriere: Gaseste numarul maxim de caractere dintr-o linie.
- * Input: Matricea textului, adresa catre numarul de linii din matrice.
- * Output: Lungimea celei mai mari linii.
+ * Description: Finds the maximum number of characters in a line.
+ * Input: The text, the address for the number of lines in text.
+ * Output: The length of the longest line.
  **/
 int GetMaxLine(char text[MAX][MAX], int *text_line_count) { 
 	int i, max_line_lenght = 0;
