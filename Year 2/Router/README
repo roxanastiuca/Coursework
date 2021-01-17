@@ -1,0 +1,49 @@
+Stiuca Roxana-Elena
+325CB
+--------------------------------------------------------------------------
+							Tema 1 - PC
+--------------------------------------------------------------------------
+Descriere implementare:
+-> Intr-o bucla infinita, primesc pachete si le tratez in functie de
+ether_type-ul lor.
+-> Pentru pachetele IP primite, daca sunt ICMP Echo Request catre router
+le raspund cu ICMP Echo Reply. Daca nu, verific checksum-ul, TTl-ul, MAC a
+ca exista o ruta in tabela de rutare. La final verific daca cunosc adresa
+destinatiei si daca da, dau forward la pachet, daca nu, trimit un ARP
+Request si pun pachetul in coada de asteptare.
+-> Pentru pachetele ARP primite, daca sunt ARP Request-uri, le trimit ARP
+Reply, iar daca sunt ARP Reply, adaug adresa MAC in tabela ARP si trimit
+pachetele din asteptare.
+
+Pentru implementarea tabelei de rutare:
+-> am folosit structura de tip trie;
+-> fiecare nod are 2 copii, corespunzatori bitilor 0 si 1;
+-> inserez cand citesc intrarile din "rtable.txt" in trie cu cheia prefixul
+si lungimea numarul de biti din masca, in cate un nod cate un bit;
+-> la cuvantului campul rtable_entry este setat cu intrare curenta din
+tabela de rutare;
+-> caut in trie dupa un ip; cum ne intereseaza sa gasim prefixul, e posibil
+acesta sa fie mai sus in arbore si nu trebuie sa mergem prin toti bitii
+ip-ului; intrarea buna e ultima gasite ("cat mai jos in arbore") pentru
+ca aia va avea mask-ul cel mai mare.
+
+Pentru implementarea protocolului ARP:
+-> am folosit structura queue data in schelet;
+-> atunci cand get_arp_entry returneaza NULL, inseamna ca nu stiu adresa
+hardware a destinatiei, asa ca pun pachetul in coada si trimit un ARP
+Request;
+-> atunci cand primesc un ARP Reply adaug MAC-ul in tabela ARP si parcurg
+pachetele din coada, incercand sa le trimit.
+--------------------------------------------------------------------------
+Probleme intampinate:
+-> neclaritate unde trebuie network byte order sau host byte order;
+-> foarte putine resurse despre interogarea tabelei de rutare in timp O(1)
+sau O(log n);
+-> checkerul initial dadea 0 pct daca aveai arp_table.txt in folder, in loc
+doar sa dea SKIP la acele teste si pe restul sa le evalueaza corect.
+--------------------------------------------------------------------------
+Observatii:
+-> am implementat tot mai putin bonusul; pentru checksum am folosit functia
+din laboratorul 5 si am inserat-o in skel.c;
+-> interogarea tabelei de rutare o fac cu trie, deci in timp O(1);
+-> structurile route_table_entry si arp_entry se gasesc in include/parser.h;

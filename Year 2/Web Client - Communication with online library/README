@@ -1,0 +1,88 @@
+Nume: STIUCA Roxana-Elena
+Grupa: 325CB
+==========================================================================
+						PROTOCOALE DE COMUNICATIE
+			Tema 3 - Client Web. Comunicatia cu REST API.
+==========================================================================
+DESCRIERE COMUNICATIE CU REST API
+
+		Deschiderea programului declanseaza deschiderea unei conexiuni
+	prin socket cu REST API-ul propus de echipa PC. De asemenea, aceasta
+	conexiune poate sa expire, iar daca in urma trimiterii unui mesaj,
+	raspunsul primit este gol, conexiunea este redeschisa automat (fara ca
+	utilizatorul sa fie sesizat), iar mesajul este retrimis.
+		Se trimit mesaje/requests HTTP catre server in functie de comanda
+	primita la stdin. Programul asteapta comenzi de la stdin pana cand
+	primeste comanda "exit" sau pana la o eroare de program (de exemplu
+	alocari esuate) sau pana la o eroare rezultata dintr-un apel de sistem.
+		In functie de comanda primita, se pot trimite prompt-uri utiliza-
+	torului pentru a fi completate (ex. username si password pentru login),
+	se formuleaza mesajul in formatul corect, se trimite la server si
+	se asteapta raspuns. Se verifica status code-ul raspunsului, stiind
+	ca 2XX inseamna succes (si se afiseaza un mesaj de succes si se extrag,
+	daca este cazul, informatiile necesare din raspuns). Daca mesajul nu
+	a avut succes, se afiseaza mesajul de eroare din interiorul
+	raspunsului.
+		Pentru unele comenzi, este necesara existenta cookie-urilor.
+	Programul le tine sub forma unui array, la login adaugand cookie-ul
+	primit in raspuns, iar la logout stergand ultimul cookie. In realitate
+	in program va exista mereu maxim un cookie.
+		Pentru unele comenzi, este necesara existenta unui token de
+	autorizatie. Programul il retine intr-un char *, setat cu NULL atunci
+	cand nu are autorizatia. Acesta este setat cu token-ul extras din
+	raspunsul la o comanda "enter_library", iar la logout este pus inapoi
+	pe NULL.
+		Functiile de compute_X_request (X fiind get/delete/post) creeaza
+	string-ul corespunzator mesajului, iar unii parametrii sunt optionali.
+	De exemplu, daca nu avem token de autorizatie, acest camp este NULL
+	si functia sare peste aceasta parte din header.
+--------------------------------------------------------------------------
+ALTE DETALII DE IMPLEMENTARE
+
+		Pentru implementarea programului, am folosit functiile din labora-
+	torul 10, aflate in fisierele buffer.c, helpers.c, requests.c pentru
+	a deschide conexiunea cu server si a o inchide, pentru a trimite
+	si a primi mesaje de la server si pentru a generate HTTP requests.
+		In client.c se afla functiile principale, cum ar fi functia main
+	care intr-un while primeste comenzi de la tastatura si apeleaza
+	functiile specifice acestora, si toate functiile corespunzatoare
+	comenzilor (plus cateva functii ajutatoare pentru comenzi).
+--------------------------------------------------------------------------
+PARSARE JSON
+
+		Am ales sa nu folosesc o biblioteca auxiliara, iar toate functiile
+	necesare parsarii raspunsurilor de la server se gasesc in parser.c.
+	Avand in vedere formatul cunoscut a mesajelor, am ales sa fac cateva
+	functii de parser care sunt suficiente pentru extragerea informatiilor
+	utile:
+
+	-> extract_status_code: extrage dintr-un mesaj HTTP primit de la server
+		status code-ul acestui mesaj, folosit mai departe pentru a
+		verifica daca cererea facuta a avut succes sau nu.
+	-> extract_cookie: extrage dintr-un mesaj HTTP primit de la server
+		valoarea din header pentru "Set-Cookie"; cookie-ul este folosit
+		pentru a demonstra ca ne-am autentificat.
+	-> extract_payload: extrage dintr-un mesaj HTTP primit de la server
+		intreg payload-ul continut intre '{' si '}'.
+	-> extract_multi_payload: extrage un payload de tip array continut
+		intre '[' si ']'.
+	-> extract_payload_field: extrage valoarea String a unui camp din
+		payload-ul unui raspuns HTTP.
+	-> extract_payload_int_field: extrage valoarea Number a unui camp din
+		payload-ul unui raspuns HTTP.
+
+		Am ales sa folosesc functii proprii si nu o biblioteca existenta
+	pentru ca am creat exact functiile de care aveam nevoie si din
+	bibliotecile pe care le-am gasit online in C, foloseau operatii
+	similare cu ce am folosit eu (functii pe string-uri).
+--------------------------------------------------------------------------
+ERORI TRATATE
+
+	-> Alocari de memorie esuate.
+	-> Apeluri de sistem esuate.
+	-> Conversii atoi esuate.
+	-> Raspuns server care nu are status-code 2XX => afisarea mesajului
+	de eroare din payload-ul raspunsului.
+--------------------------------------------------------------------------
+OBSERVATII
+	Programul nu are memory leaks.

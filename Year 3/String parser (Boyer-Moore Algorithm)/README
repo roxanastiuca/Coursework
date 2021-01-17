@@ -1,0 +1,53 @@
+STIUCA Roxana-Elena, 335CB
+--------------------------------------------------------------------------
+                           LFA - Tema 1
+                    Parser siruri de caractere
+--------------------------------------------------------------------------
+MATRICEA DELTA
+	- Este o matrice (len(pat)+1)x26. Semnificatia elementelor sale este:
+	delta[i][ch] = starea in care se ajunge daca, fiind in starea i, se
+				citeste din text caracterul ch.
+	- Initial, linia 0 are toate elementele 0, cu exceptia elementului
+	corespunzator primului caracter din pattern, care are valoarea 1. (din
+	starea 0, putem trece in starea 1 daca citim primul caracter din
+	pattern).
+	- Pentru urmatoarele linii:
+		- Incepem cu toate elementele de valoare 0.
+		- Singurele coloane care pot avea valori nenule sunt cele
+		corespunzatoare caracterelor ce se afla in pattern
+		(pat_chars = list(set(pat)) obtine o lista a acestora).
+		- Ne uitam la fiecare caracter din pat_chars si il concatenam
+		la prefixul din pattern corespunzator starii curente:
+		pat[:i]+ch.
+		- Cautam cea mai avansata stare in care putem trece, avand citit
+		cuvantul pat[:i]+ch. Pentru asta mergem prin toate starile
+		[0, i+i] si verificam daca prefixul din pattern corespunzator
+		acelei stari este egal cu sufixul de aceeasi lungime din
+		pat[:i]+ch.
+		- Salvam valoarea in delta, la coloana corespunzatoare
+		caracterului ch.
+--------------------------------------------------------------------------
+ALGORITMUL BOYER-MOORE
+	- Calculam matricea delta, folosind procedeul de mai sus.
+	- Incepem de pe starea 0.
+	- Parcurgem fiecare caracter din text si facem, pe baza matricii
+	delta si a caracterului citit din text, tranzitia de la o stare la
+	alta.
+	- Cand se gaseste starea finala (len(pat)), se salveaza indicele
+	intr-o lista.
+	- Returnam lista.
+--------------------------------------------------------------------------
+COMPLEXITATE
+	- Calculul matricii delta se realizeaza in O(len(string1)^2)
+	[asta daca consideram ca verificarea egalitatii intre 2 stringuri se
+	realizeaza in O(1); daca nu, atunci complexitatea calcului este
+	O(len(string1)^3)].
+	- Costul tranzitiilor si al parcurgerii textului este de
+	O(len(string2)).
+	- In total: O(len(string2) + len(string1)^2).
+--------------------------------------------------------------------------
+OBSERVATII
+	* Am mapat un caracter ASCII [A-Z] la un integer [0-25], folosind
+	regula ord(ch)-ord('A').
+	* Am folosit biblioteca argparse pentru a parsa argumentele din linia
+	de comanda intr-o maniera eleganta.
